@@ -1,0 +1,462 @@
+{
+ "Resources": {
+  "devee0EventBridgeInvokeStepFunctionRole1ED56AC2": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "events.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Description": "dev-ee0-Role for EventBridge to invoke Step Function",
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AWSStepFunctionsFullAccess"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AmazonS3FullAccess"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AWSHealthImagingFullAccess"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AmazonHealthLakeFullAccess"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AWSLambda_FullAccess"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DCM2FHIRStack-Final-Test070725/EventBridgeStack/dev-ee0-EventBridgeInvokeStepFunctionRole/Resource"
+   }
+  },
+  "devee0EventBridgeInvokeStepFunctionRoleDefaultPolicyA7EB6099": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "states:StartExecution",
+       "Effect": "Allow",
+       "Resource": {
+        "Ref": "referencetoDCM2FHIRStackFinalTest070725StepFunctionsStackNestedStackStepFunctionsStackNestedStackResourceD1B6525EOutputsDCM2FHIRStackFinalTest070725StepFunctionsStackMyHealthStateMachine3EF0AE46Ref"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "devee0EventBridgeInvokeStepFunctionRoleDefaultPolicyA7EB6099",
+    "Roles": [
+     {
+      "Ref": "devee0EventBridgeInvokeStepFunctionRole1ED56AC2"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DCM2FHIRStack-Final-Test070725/EventBridgeStack/dev-ee0-EventBridgeInvokeStepFunctionRole/DefaultPolicy/Resource"
+   }
+  },
+  "S3ObjectCreatedRule81363060": {
+   "Type": "AWS::Events::Rule",
+   "Properties": {
+    "Description": "Rule to capture S3 object creation events",
+    "EventPattern": {
+     "detail": {
+      "bucket": {
+       "name": [
+        "dev-ee0-new-dicom-image-lake"
+       ]
+      }
+     },
+     "detail-type": [
+      "Object Created"
+     ],
+     "source": [
+      "aws.s3"
+     ]
+    },
+    "State": "ENABLED",
+    "Targets": [
+     {
+      "Arn": {
+       "Ref": "referencetoDCM2FHIRStackFinalTest070725StepFunctionsStackNestedStackStepFunctionsStackNestedStackResourceD1B6525EOutputsDCM2FHIRStackFinalTest070725StepFunctionsStackMyHealthStateMachine3EF0AE46Ref"
+      },
+      "Id": "Target0",
+      "InputPath": "$",
+      "RoleArn": {
+       "Fn::GetAtt": [
+        "devee0EventBridgeInvokeStepFunctionRole1ED56AC2",
+        "Arn"
+       ]
+      }
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DCM2FHIRStack-Final-Test070725/EventBridgeStack/S3ObjectCreatedRule/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/y2KQQ6CMBBFz8K+jFbcuHavpB7A1DLGSmkJMyMhTe9uBFfvv593AH06wr6yM9Wu6+vgH5AvSIzdja3rlZ3pnr0dIJsUUJ2fcWWbgnfLT7dVFH4wMkE28s8kYCnKICWZ3HpdhUfhotqFXynuGtAamupN3teTRPYDgtn4BW2cENOXAAAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "DCM2FHIRStack-Final-Test070725/EventBridgeStack/CDKMetadata/Default"
+   },
+   "Condition": "CDKMetadataAvailable"
+  }
+ },
+ "Outputs": {
+  "EventBridgeRuleName": {
+   "Value": {
+    "Ref": "S3ObjectCreatedRule81363060"
+   }
+  },
+  "EventBridgeRoleName": {
+   "Value": {
+    "Ref": "devee0EventBridgeInvokeStepFunctionRole1ED56AC2"
+   }
+  },
+  "EventBridgeRoleArn": {
+   "Value": {
+    "Fn::GetAtt": [
+     "devee0EventBridgeInvokeStepFunctionRole1ED56AC2",
+     "Arn"
+    ]
+   }
+  },
+  "EventBridgeRuleArn": {
+   "Value": {
+    "Fn::GetAtt": [
+     "S3ObjectCreatedRule81363060",
+     "Arn"
+    ]
+   }
+  }
+ },
+ "Conditions": {
+  "CDKMetadataAvailable": {
+   "Fn::Or": [
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "af-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-3"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-south-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-3"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-4"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ca-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ca-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-northwest-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-central-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-south-2"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-3"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "il-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "sa-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-1"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Equals": [
+      {
+       "Ref": "AWS::Region"
+      },
+      "us-west-2"
+     ]
+    }
+   ]
+  }
+ },
+ "Parameters": {
+  "referencetoDCM2FHIRStackFinalTest070725StepFunctionsStackNestedStackStepFunctionsStackNestedStackResourceD1B6525EOutputsDCM2FHIRStackFinalTest070725StepFunctionsStackMyHealthStateMachine3EF0AE46Ref": {
+   "Type": "String"
+  }
+ }
+}
