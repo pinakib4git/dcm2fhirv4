@@ -46,7 +46,7 @@ class S3BucketStackEvent(NestedStack):
             )
 
         # Set the S3-bucket name
-        self.bucket_name = f"{resource_prefix}-new-dicom-image-lake"
+        self.bucket_name = self.event_bucket.bucket_name
         
         # Output important information
         CfnOutput(self, "BucketARN", value=self.event_bucket.bucket_arn)
